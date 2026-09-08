@@ -27,21 +27,35 @@ cd Text-To-SQL-Agent
 uv sync
 ```
 
-### 2. Set up Ollama (local LLM)
+### 2. Install & set up Ollama (local LLM)
 
-Install [Ollama](https://ollama.com/), then pull the model:
+1. Download and install from [ollama.com](https://ollama.com/)
+2. Verify installation:
+   ```bash
+   ollama --version
+   ```
+3. Pull the model:
+   ```bash
+   ollama pull qwen3:4b
+   ```
 
-```bash
-ollama pull qwen3:4b
-```
+### 3. Install & set up MySQL
 
-### 3. Set up MySQL
-
-Create the database and import the CSV files from `DATA/`:
-
-```sql
-CREATE DATABASE text_to_sql;
-```
+1. Download and install [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)
+   - **Windows:** Use the MSI Installer and follow the setup wizard
+   - **macOS:** `brew install mysql`
+   - **Linux:** `sudo apt install mysql-server`
+2. Start the MySQL service:
+   - **Windows:** It starts automatically, or use `net start mysql`
+   - **macOS/Linux:** `sudo systemctl start mysql`
+3. Log in and create the database:
+   ```bash
+   mysql -u root -p
+   ```
+   ```sql
+   CREATE DATABASE text_to_sql;
+   ```
+4. Import the CSV files from the `DATA/` directory into the `text_to_sql` database
 
 ### 4. Configure environment variables
 
