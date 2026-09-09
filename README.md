@@ -1,25 +1,52 @@
 # Text-to-SQL AI Agent
 
-An AI-powered agent that lets you query a MySQL database using plain English. It discovers the schema, generates SQL, validates and executes it, then returns a natural-language answer.
-
-**Example:**
-
-> *"Which product has the highest total sales amount?"*
->
-> → `Product 26 — $117,291,821.40`
+An AI-powered chatbot that lets you query a MySQL database using plain English. Ask a question → the agent discovers the schema, generates SQL, validates it, runs the query, and returns a natural-language answer — all through a clean chat UI.
 
 ## Tech Stack
 
-| Layer       | Technology                            |
-| ----------- | ------------------------------------- |
-| LLM         | Qwen3 4B (via Ollama) / Groq / Gemini |
-| Agent       | LangChain · LangGraph                |
-| Database    | MySQL · SQLAlchemy · PyMySQL        |
-| Environment | Python 3.14 · uv                     |
+| Layer    | Technology                                  |
+| -------- | ------------------------------------------- |
+| Frontend | React 19 · Vite                             |
+| Backend  | FastAPI · Uvicorn                            |
+| AI Agent | LangChain · LangGraph · Groq (gpt-oss-20b) |
+| Database | MySQL · SQLAlchemy · PyMySQL                |
+| History  | SQLite (LangGraph checkpoints)              |
+| Runtime  | Python 3.14 · uv · Node.js                 |
 
-## Installation
+## Project Structure
 
-### 1. Clone & install dependencies
+```
+Text-To-SQL-Agent/
+├── Backend/
+│   ├── api.py            # FastAPI endpoints
+│   ├── functions.py       # Agent setup, DB connection, chat logic
+│   └── checkpoints.db     # SQLite chat history (auto-created)
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx        # Chat UI component
+│   │   ├── index.css      # Styles
+│   │   └── main.jsx       # React entry point
+│   ├── package.json       # Frontend dependencies
+│   └── vite.config.js     # Vite config
+├── DATA/                  # CSV files for database tables
+├── .env                   # Environment variables (not committed)
+├── pyproject.toml         # Python dependencies & project config
+└── README.md
+```
+
+## Getting Started
+
+### Prerequisites
+
+- **Python 3.14+** — [python.org](https://www.python.org/downloads/)
+- **uv** (Python package manager) — [docs.astral.sh/uv](https://docs.astral.sh/uv/)
+- **Node.js 18+** — [nodejs.org](https://nodejs.org/)
+- **MySQL 8.0+** — [dev.mysql.com/downloads](https://dev.mysql.com/downloads/mysql/)
+- **Groq API Key** — [console.groq.com](https://console.groq.com/)
+
+---
+
+### Step 1 — Clone the repo & install Python dependencies
 
 ```bash
 git clone https://github.com/jassi789012/Text-To-SQL-Agent.git
@@ -27,19 +54,7 @@ cd Text-To-SQL-Agent
 uv sync
 ```
 
-### 2. Install & set up Ollama (local LLM)
-
-1. Download and install from [ollama.com](https://ollama.com/)
-2. Verify installation:
-   ```bash
-   ollama --version
-   ```
-3. Pull the model:
-   ```bash
-   ollama pull qwen3:4b
-   ```
-
-### 3. Install & set up MySQL
+### Step 2 — Install & set up MySQL
 
 1. Download and install [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)
    - **Windows:** Use the MSI Installer and follow the setup wizard
@@ -57,7 +72,7 @@ uv sync
    ```
 4. Import the CSV files from the `DATA/` directory into the `text_to_sql` database
 
-### 4. Configure environment variables
+### Step 3 — Configure environment variables
 
 Create a `.env` file in the project root:
 
@@ -67,34 +82,40 @@ MYSQL_PORT=3306
 MYSQL_USER=your_username
 MYSQL_PASSWORD=your_password
 MYSQL_DATABASE=text_to_sql
+
+GROQ_API_KEY=your_groq_api_key
 ```
 
-## Usage
-
-Start Ollama, then open and run `main.ipynb`:
+### Step 4 — Start the backend (FastAPI)
 
 ```bash
-ollama serve
+cd Backend
+uv run uvicorn api:app --reload
 ```
 
-```python
-question = "Which product has the highest total sales amount?"
+The API server will start at `http://127.0.0.1:8000`. You can test the endpoints at `http://127.0.0.1:8000/docs`.
 
-result = agent.invoke({
-    "messages": [{"role": "user", "content": question}]
-})
+### Step 5 — Start the frontend (React)
+
+Open a **new terminal** and run:
+
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-## Project Structure
+The app will open at `http://localhost:5173`.
 
-```
-Text-To-SQL-Agent/
-├── DATA/              # CSV files for database tables
-├── src/text_to_sql/   # Source package
-├── main.ipynb         # Main notebook
-├── pyproject.toml     # Dependencies & project config
-└── .env               # Environment variables (not committed)
-```
+---
+
+## API Endpoints
+
+| Method   | Endpoint         | Description                        |
+| -------- | ---------------- | ---------------------------------- |
+| `GET`    | `/chat-history`  | Get all chat threads and messages  |
+| `POST`   | `/invoke-Agent`  | Send a question to the SQL agent   |
+| `DELETE` | `/delete-chat`   | Delete a chat thread by thread ID  |
 
 ## Author
 
