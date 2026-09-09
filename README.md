@@ -54,7 +54,20 @@ cd Text-To-SQL-Agent
 uv sync
 ```
 
-### Step 2 — Install & set up MySQL
+### Step 2 — Activate the virtual environment
+
+```bash
+# Windows (PowerShell)
+.venv\Scripts\Activate.ps1
+
+# Windows (CMD)
+.venv\Scripts\activate.bat
+
+# macOS / Linux
+source .venv/bin/activate
+```
+
+### Step 3 — Install & set up MySQL
 
 1. Download and install [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)
    - **Windows:** Use the MSI Installer and follow the setup wizard
@@ -72,21 +85,17 @@ uv sync
    ```
 4. Import the CSV files from the `DATA/` directory into the `text_to_sql` database
 
-### Step 3 — Configure environment variables
+### Step 4 — Configure environment variables
 
-Create a `.env` file in the project root:
+Copy the example file and fill in your credentials:
 
-```env
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_USER=your_username
-MYSQL_PASSWORD=your_password
-MYSQL_DATABASE=text_to_sql
-
-GROQ_API_KEY=your_groq_api_key
+```bash
+cp .env.example .env
 ```
 
-### Step 4 — Start the backend (FastAPI)
+Then edit `.env` with your MySQL password and Groq API key.
+
+### Step 5 — Start the backend (FastAPI)
 
 ```bash
 cd Backend
@@ -95,7 +104,7 @@ uv run uvicorn api:app --reload
 
 The API server will start at `http://127.0.0.1:8000`. You can test the endpoints at `http://127.0.0.1:8000/docs`.
 
-### Step 5 — Start the frontend (React)
+### Step 6 — Start the frontend (React)
 
 Open a **new terminal** and run:
 
